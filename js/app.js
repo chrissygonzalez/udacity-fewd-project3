@@ -19,14 +19,18 @@ Enemy.prototype.update = function(dt) {
 }
 
 Enemy.prototype.start = function() {
-    // start the bugs off-screen
-    var howFarLeft = Math.floor(Math.random() * (450 - 110)) + 450 + 1;
-    this.x = -howFarLeft;
+    // start the bugs off-screen at a distance between -450 and -110
+    var leftOffset = Math.floor(Math.random() * (450 - 110)) + 450 + 1;
+    this.x = -leftOffset;
 
-    // top row is 60, middle row is 143, bottom row is 226
-    var rowPosition = [60, 143, 226];
+    // the three bug rows
+    var firstRow = 60;
+    var secondRow = 143;
+    var thirdRow = 226;
+
+    var rows = [firstRow, secondRow, thirdRow];
     var whichRow = Math.floor(Math.random() * 3);
-    this.y = rowPosition[whichRow];
+    this.y = rows[whichRow];
 
     // set a random bug speed
     this.speed = Math.floor(Math.random() * (600 - 350)) + 200 + 1;
@@ -46,48 +50,44 @@ var Player = function() {
     this.y = 322;
 }
 
-Player.prototype.update = function() {
-    this.render();
+Player.prototype.update = function(key) {
+    // width of column, height of row
+    var colWidth = 101;
+    var rowHeight = 83;
+
+    // keeps player within canvas
+    if (key === 'left' && this.x > 0) {
+        this.x -= colWidth;
+    } else if (key === 'right' && this.x < 404) {
+        this.x += colWidth;
+    } else if (key === 'up' && this.y > 10) {
+        this.y -= rowHeight;
+    } else if (key === 'down' && this.y < 405) {
+        this.y += rowHeight;
+    }
 }
 
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+Player.prototype.reset = function() {
+    this.x = 202;
+    this.y = 322;
+}
+
 Player.prototype.handleInput = function(key) {
     if(key) {
-        switch (key) {
-            case 'up':
-                this.y -= 83;
-                this.update();
-                break;
-            case 'down':
-                this.y += 83;
-                this.update();
-                break;
-            case 'left':
-                this.x -= 101;
-                this.update();
-                break;
-            case 'right':
-                this.x += 101;
-                this.update();
-                break;
-            default:
-                break;
-        }
+        this.update(key);
     }
 }
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
 
-// TODO generate random number of bugs and push to allEnemies automatically
+// TODO generate random number of bugs and push to allEnemies automatically?
+var allEnemies = [];
 var enemy1 = new Enemy();
 var enemy2 = new Enemy();
 var enemy3 = new Enemy();
-var allEnemies = [enemy1, enemy2, enemy3];
-console.log('allEnemies: ' + allEnemies);
+allEnemies.push(enemy1, enemy2, enemy3);
 
 var player = new Player();
 
@@ -104,3 +104,14 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+function checkCollisions() {
+    for (var i=0; i<allEnemies.length; i++) {
+        if(player.x < allEnemies[i].x + 101 &&
+            player.x > allEnemies[i].x &&
+            player.y > allEnemies[i].y &&
+            player.y < allEnemies[i].y + 83) {
+            player.reset();
+        }
+    }
+}
