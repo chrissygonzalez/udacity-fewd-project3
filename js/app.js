@@ -1,3 +1,7 @@
+//*****************************
+// Enemies
+//*****************************
+
 // Enemies our player must avoid
 var Enemy = function() {
     // image for bugs
@@ -12,7 +16,7 @@ Enemy.prototype.update = function(dt) {
     // reset bug once it goes off screen
     if (this.x < 505 + 110) {
         this.x += this.speed * dt;
-        this.render();
+        //this.render();
     } else {
         this.start();
     }
@@ -41,9 +45,11 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+
+//*****************************
+// Players
+//*****************************
+
 var Player = function() {
     this.sprite = 'images/char-boy.png';
     this.x = 202;
@@ -82,7 +88,37 @@ Player.prototype.handleInput = function(key) {
     }
 }
 
-// TODO generate random number of bugs and push to allEnemies automatically?
+//*****************************
+// Gems
+//*****************************
+
+var Gem = function() {
+    this.sprite = 'images/gem-orange.png';
+    this.position();
+}
+
+Gem.prototype.position = function() {
+    var rows = [83, 166, 249, 332, 415];
+    var columns = [0, 101, 202, 303, 404];
+    var random1 = Math.floor(Math.random() * 5);
+    var random2 = Math.floor(Math.random() * 5);
+
+    console.log(random1 + ', ' + random2);
+
+    this.x = columns[random1];
+    this.y = rows[random2]
+}
+
+Gem.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+var gem = new Gem();
+
+//*****************************
+// Instantiate everything
+//*****************************
+
 var allEnemies = [];
 var enemy1 = new Enemy();
 var enemy2 = new Enemy();
@@ -92,8 +128,10 @@ allEnemies.push(enemy1, enemy2, enemy3);
 var player = new Player();
 
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+//*****************************
+// Listen for keyboard
+//*****************************
+
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
@@ -104,6 +142,10 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+//*****************************
+// Detect collisions
+//*****************************
 
 function checkCollisions() {
     for (var i=0; i<allEnemies.length; i++) {
