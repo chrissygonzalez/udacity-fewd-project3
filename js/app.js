@@ -94,19 +94,36 @@ Player.prototype.handleInput = function(key) {
 
 var Gem = function() {
     this.sprite = 'images/gem-orange.png';
-    this.position();
+    this.showing = false;
+
+    this.counter = 0;
+}
+
+Gem.prototype.update = function() {
+    console.log('counter = ' + this.counter);
+    if (this.counter > 150) {
+        this.position();
+        this.counter = 0;
+    } else {
+        this.counter++;
+    }
 }
 
 Gem.prototype.position = function() {
-    var rows = [83, 166, 249, 332, 415];
-    var columns = [0, 101, 202, 303, 404];
-    var random1 = Math.floor(Math.random() * 5);
-    var random2 = Math.floor(Math.random() * 5);
+    if (this.showing === false) {
+        var rows = [83, 166, 249, 332, 415];
+        var columns = [0, 101, 202, 303, 404];
+        var random1 = Math.floor(Math.random() * 5);
+        var random2 = Math.floor(Math.random() * 5);
 
-    console.log(random1 + ', ' + random2);
-
-    this.x = columns[random1];
-    this.y = rows[random2]
+        this.x = columns[random1];
+        this.y = rows[random2]
+        this.showing = true;
+    } else {
+        this.x = -200;
+        this.y = -200;
+        this.showing = false;
+    }
 }
 
 Gem.prototype.render = function() {
@@ -147,13 +164,4 @@ document.addEventListener('keyup', function(e) {
 // Detect collisions
 //*****************************
 
-function checkCollisions() {
-    for (var i=0; i<allEnemies.length; i++) {
-        if(player.x < allEnemies[i].x + 101 &&
-            player.x > allEnemies[i].x &&
-            player.y > allEnemies[i].y &&
-            player.y < allEnemies[i].y + 83) {
-            player.reset();
-        }
-    }
-}
+
