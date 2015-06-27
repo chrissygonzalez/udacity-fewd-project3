@@ -54,6 +54,8 @@ var Player = function() {
     this.sprite = 'images/char-boy.png';
     this.x = 202;
     this.y = 322;
+
+    this.currentScore = 1000;
 }
 
 Player.prototype.update = function(key) {
@@ -73,6 +75,15 @@ Player.prototype.update = function(key) {
     }
 }
 
+Player.prototype.score = function() {
+    if(this.x === gem.x &&
+        (this.y + 10) === gem.y) {
+        this.currentScore +=10;
+        gem.hideGem();
+    }
+    return this.currentScore;
+}
+
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
@@ -85,6 +96,7 @@ Player.prototype.reset = function() {
 Player.prototype.handleInput = function(key) {
     if(key) {
         this.update(key);
+        this.score();
     }
 }
 
@@ -100,7 +112,7 @@ var Gem = function() {
 }
 
 Gem.prototype.update = function() {
-    console.log('counter = ' + this.counter);
+    //console.log('counter = ' + this.counter);
     if (this.counter > 150) {
         this.position();
         this.counter = 0;
@@ -111,19 +123,27 @@ Gem.prototype.update = function() {
 
 Gem.prototype.position = function() {
     if (this.showing === false) {
-        var rows = [83, 166, 249, 332, 415];
-        var columns = [0, 101, 202, 303, 404];
-        var random1 = Math.floor(Math.random() * 5);
-        var random2 = Math.floor(Math.random() * 5);
-
-        this.x = columns[random1];
-        this.y = rows[random2]
-        this.showing = true;
+        this.showGem();
     } else {
-        this.x = -200;
-        this.y = -200;
-        this.showing = false;
+        this.hideGem();
     }
+}
+
+Gem.prototype.showGem = function() {
+    var rows = [83, 166, 249, 332, 415];
+    var columns = [0, 101, 202, 303, 404];
+    var random1 = Math.floor(Math.random() * 5);
+    var random2 = Math.floor(Math.random() * 5);
+
+    this.x = columns[random1];
+    this.y = rows[random2]
+    this.showing = true;
+}
+
+Gem.prototype.hideGem = function() {
+    this.x = -200;
+    this.y = -200;
+    this.showing = false;
 }
 
 Gem.prototype.render = function() {
@@ -143,7 +163,6 @@ var enemy3 = new Enemy();
 allEnemies.push(enemy1, enemy2, enemy3);
 
 var player = new Player();
-
 
 //*****************************
 // Listen for keyboard

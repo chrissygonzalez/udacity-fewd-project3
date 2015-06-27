@@ -25,6 +25,8 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
+        var scoreboard = doc.getElementsByTagName('header')[0];
+
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
@@ -96,6 +98,11 @@ var Engine = (function(global) {
         });
         player.update();
         gem.update();
+        updateScore();
+    }
+
+    function updateScore() {
+        scoreboard.innerHTML = player.score();
     }
 
     function checkCollisions() {
