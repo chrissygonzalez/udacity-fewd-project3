@@ -2,32 +2,30 @@
 // Enemies
 //*****************************
 
-// Enemies our player must avoid
+// sets image, calls init to set up a bug
 var Enemy = function() {
-    // image for bugs
     this.sprite = 'images/enemy-bug.png';
-
-    this.start();
+    this.init();
 }
 
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
+// updates position or resets it once it goes off screen
 Enemy.prototype.update = function(dt) {
-    // reset bug once it goes off screen
     if (this.x < 505 + 110) {
+        // move that bug
         this.x += this.speed * dt;
-        //this.render();
     } else {
-        this.start();
+        // i.e. start this bug over
+        this.init();
     }
 }
 
-Enemy.prototype.start = function() {
-    // start the bugs off-screen at a distance between -450 and -110
+// sets random position and speed for this bug
+Enemy.prototype.init = function() {
+    // starts the bugs off-screen at a distance between -450 and -110
     var leftOffset = Math.floor(Math.random() * (450 - 110)) + 450 + 1;
     this.x = -leftOffset;
 
-    // the three bug rows
+    // chooses a row randomly
     var firstRow = 60;
     var secondRow = 143;
     var thirdRow = 226;
@@ -36,11 +34,11 @@ Enemy.prototype.start = function() {
     var whichRow = Math.floor(Math.random() * 3);
     this.y = rows[whichRow];
 
-    // set a random bug speed
+    // sets a random bug speed
     this.speed = Math.floor(Math.random() * (600 - 350)) + 200 + 1;
 }
 
-// Draw the enemy on the screen, required method for game
+// draws the bug
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
@@ -52,12 +50,12 @@ Enemy.prototype.render = function() {
 
 var Player = function() {
     this.sprite = 'images/char-boy.png';
-    this.x = 202;
-    this.y = 322;
-
-    this.currentScore = 1000;
+    this.reset();
+    this.currentScore = 0;
+    this.lives = 5;
 }
 
+// allows player to move if not at edge of canvas
 Player.prototype.update = function(key) {
     // width of column, height of row
     var colWidth = 101;
@@ -75,28 +73,66 @@ Player.prototype.update = function(key) {
     }
 }
 
-Player.prototype.score = function() {
-    if(this.x === gem.x &&
-        (this.y + 10) === gem.y) {
-        this.currentScore +=10;
-        gem.hideGem();
-    }
-    return this.currentScore;
-}
-
+// draws player
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+// resets player in starting position
 Player.prototype.reset = function() {
     this.x = 202;
     this.y = 322;
 }
 
+// if the key is allowed, calls update, checks for gem collision
 Player.prototype.handleInput = function(key) {
     if(key) {
         this.update(key);
         this.score();
+    }
+}
+
+//*****************************
+// Players -- Scoring
+//*****************************
+
+// increases score if warranted, called by game loop
+Player.prototype.score = function() {
+    this.gemScore();
+    this.waterScore();
+    return this.currentScore;
+}
+
+// 10 points for hitting a gem
+Player.prototype.gemScore = function() {
+    if(this.x === gem.x &&
+    (this.y) === gem.y) {
+        this.currentScore +=10;
+        gem.hideGem();
+    }
+}
+
+// 50 points for reaching the water
+Player.prototype.waterScore = function() {
+    if(this.y === -10) {
+        this.currentScore += 50;
+        this.reset();
+    }
+}
+
+//*****************************
+// Players -- Lives
+//*****************************
+
+Player.prototype.howManyLives = function() {
+    return this.lives;
+}
+
+Player.prototype.loseLife = function() {
+    this.lives -= 1;
+    if (this.lives === 0) {
+        console.log('you died!');
+        console.log(Engine);
     }
 }
 
@@ -136,7 +172,7 @@ Gem.prototype.showGem = function() {
     var random2 = Math.floor(Math.random() * 5);
 
     this.x = columns[random1];
-    this.y = rows[random2]
+    this.y = rows[random2] - 10;
     this.showing = true;
 }
 
@@ -178,9 +214,3 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
-
-//*****************************
-// Detect collisions
-//*****************************
-
-
