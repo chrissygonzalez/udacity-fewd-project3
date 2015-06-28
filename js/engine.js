@@ -23,10 +23,11 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
-
-        var scoreboard = doc.getElementById('scoreboard');
-        var lives = doc.getElementById('lives');
+        lastTime,
+        scoreboard = doc.getElementById('scoreboard'),
+        lives = doc.getElementById('lives'),
+        collisionSound = doc.getElementById('collision'),
+        gameoverSound = doc.getElementById('gameover');
 
     canvas.width = 505;
     canvas.height = 606;
@@ -56,12 +57,11 @@ var Engine = (function(global) {
          */
         lastTime = now;
 
-        /* Use the browser's requestAnimationFrame function to call this
-         * function again as soon as the browser is able to draw another frame.
-         */
+        // stop animating if 0 lives left, but update display of lives one more time
         if (player.howManyLives() > 0) {
             win.requestAnimationFrame(main);
         } else {
+            gameoverSound.play();
             updateLives();
         }
     };
@@ -90,13 +90,7 @@ var Engine = (function(global) {
         checkCollisions();
     }
 
-    /* This is called by the update function  and loops through all of the
-     * objects within your allEnemies array as defined in app.js and calls
-     * their update() methods. It will then call the update function for your
-     * player object. These update methods should focus purely on updating
-     * the data/properties related to  the object. Do your drawing in your
-     * render methods.
-     */
+    // update everything, check for changes to score, lives, and any collisions
     function updateEntities(dt) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
@@ -123,6 +117,7 @@ var Engine = (function(global) {
             player.y < enemy.y + 83) {
             player.reset();
             player.loseLife();
+            collisionSound.play();
             }
         });
     }

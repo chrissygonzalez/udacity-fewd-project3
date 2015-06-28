@@ -8,20 +8,9 @@ var Enemy = function() {
     this.init();
 }
 
-// updates position or resets it once it goes off screen
-Enemy.prototype.update = function(dt) {
-    if (this.x < 505 + 110) {
-        // move that bug
-        this.x += this.speed * dt;
-    } else {
-        // i.e. start this bug over
-        this.init();
-    }
-}
-
-// sets random position and speed for this bug
+// sets random starting position and speed for bug
 Enemy.prototype.init = function() {
-    // starts the bugs off-screen at a distance between -450 and -110
+    // positions the bug off-screen at a distance between -450 and -110
     var leftOffset = Math.floor(Math.random() * (450 - 110)) + 450 + 1;
     this.x = -leftOffset;
 
@@ -43,6 +32,16 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+// changes bug position, resets once it goes off screen
+Enemy.prototype.update = function(dt) {
+    if (this.x < 505 + 110) {
+        // move bug
+        this.x += this.speed * dt;
+    } else {
+        // reset bug
+        this.init();
+    }
+}
 
 //*****************************
 // Players
@@ -51,8 +50,29 @@ Enemy.prototype.render = function() {
 var Player = function() {
     this.sprite = 'images/char-boy.png';
     this.reset();
+
+    // sets the player's score and available lives
     this.currentScore = 0;
     this.lives = 5;
+}
+
+// puts player in starting position
+Player.prototype.reset = function() {
+    this.x = 202;
+    this.y = 322;
+}
+
+// draws player
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+// if the key is allowed, calls update, checks for score changes
+Player.prototype.handleInput = function(key) {
+    if(key) {
+        this.update(key);
+        this.score();
+    }
 }
 
 // allows player to move if not at edge of canvas
@@ -73,25 +93,6 @@ Player.prototype.update = function(key) {
     }
 }
 
-// draws player
-Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
-
-// resets player in starting position
-Player.prototype.reset = function() {
-    this.x = 202;
-    this.y = 322;
-}
-
-// if the key is allowed, calls update, checks for gem collision
-Player.prototype.handleInput = function(key) {
-    if(key) {
-        this.update(key);
-        this.score();
-    }
-}
-
 //*****************************
 // Players -- Scoring
 //*****************************
@@ -105,16 +106,20 @@ Player.prototype.score = function() {
 
 // 10 points for hitting a gem
 Player.prototype.gemScore = function() {
+    var gemSound = document.getElementById('gem');
     if(this.x === gem.x &&
     (this.y) === gem.y) {
         this.currentScore +=10;
+        gemSound.play();
         gem.hideGem();
     }
 }
 
 // 50 points for reaching the water
 Player.prototype.waterScore = function() {
+    var successSound = document.getElementById('success');
     if(this.y === -10) {
+        successSound .play();
         this.currentScore += 50;
         this.reset();
     }
@@ -124,10 +129,12 @@ Player.prototype.waterScore = function() {
 // Players -- Lives
 //*****************************
 
+// called by updateEntities > updateLives, powers on-screen score
 Player.prototype.howManyLives = function() {
     return this.lives;
 }
 
+// called by checkCollisions
 Player.prototype.loseLife = function() {
     this.lives -= 1;
 }
@@ -138,21 +145,15 @@ Player.prototype.loseLife = function() {
 
 var Gem = function() {
     this.sprite = 'images/gem-orange.png';
+
+    // start with gem not showing
     this.showing = false;
 
+    // counter controls timing of gem appearance/disappearance
     this.counter = 0;
 }
 
-Gem.prototype.update = function() {
-    //console.log('counter = ' + this.counter);
-    if (this.counter > 150) {
-        this.position();
-        this.counter = 0;
-    } else {
-        this.counter++;
-    }
-}
-
+// show if showing, hide if hidden
 Gem.prototype.position = function() {
     if (this.showing === false) {
         this.showGem();
@@ -178,11 +179,19 @@ Gem.prototype.hideGem = function() {
     this.showing = false;
 }
 
+Gem.prototype.update = function() {
+    // count to 150, then move gem and start count over
+    if (this.counter > 150) {
+        this.position();
+        this.counter = 0;
+    } else {
+        this.counter++;
+    }
+}
+
 Gem.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
-
-var gem = new Gem();
 
 //*****************************
 // Instantiate everything
@@ -196,8 +205,10 @@ allEnemies.push(enemy1, enemy2, enemy3);
 
 var player = new Player();
 
+var gem = new Gem();
+
 //*****************************
-// Listen for keyboard
+// Listen for key presses
 //*****************************
 
 document.addEventListener('keyup', function(e) {
