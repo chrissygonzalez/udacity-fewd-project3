@@ -130,10 +130,6 @@ Player.prototype.howManyLives = function() {
 
 Player.prototype.loseLife = function() {
     this.lives -= 1;
-    if (this.lives === 0) {
-        console.log('you died!');
-        console.log(Engine);
-    }
 }
 
 //*****************************
