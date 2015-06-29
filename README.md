@@ -1,6 +1,13 @@
-frontend-nanodegree-arcade-game
-===============================
+Shall we play a game?
+=====================
 
-Students should use this rubric: https://www.udacity.com/course/viewer#!/c-ud015/l-3072058665/m-3072588797
+Welcome to Chrissy Gonzalez's frontend-nanodegree-arcade-game!
+--------------------------------------------------------------
 
-for self-checking their submission.
+Gather gems and cross the road to the water, avoiding bugs along the way.
+
+Move your player up, down, left, or right with your arrow keys.
+
+* You have five lives.
+* Gems are worth 10 points.
+* Reaching the water is worth 50 points.
