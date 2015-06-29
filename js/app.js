@@ -69,7 +69,7 @@ Player.prototype.render = function() {
 
 // if the key is allowed, calls update, checks for score changes
 Player.prototype.handleInput = function(key) {
-    if(key) {
+    if(key !== undefined) {
         this.update(key);
         this.score();
     }
@@ -205,11 +205,10 @@ Gem.prototype.render = function() {
 // Instantiate everything
 //*****************************
 
-var allEnemies = [];
 var enemy1 = new Enemy();
 var enemy2 = new Enemy();
 var enemy3 = new Enemy();
-allEnemies.push(enemy1, enemy2, enemy3);
+var allEnemies = [enemy1, enemy2, enemy3];
 
 var player = new Player();
 
