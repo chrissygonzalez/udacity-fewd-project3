@@ -27,7 +27,8 @@ var Engine = (function(global) {
         scoreboard = doc.getElementById('scoreboard'),
         lives = doc.getElementById('lives'),
         collisionSound = doc.getElementById('collision'),
-        gameoverSound = doc.getElementById('gameover');
+        gameoverSound = doc.getElementById('gameover'),
+        resetButton = doc.getElementById('reset');
 
     canvas.width = 505;
     canvas.height = 606;
@@ -57,12 +58,14 @@ var Engine = (function(global) {
          */
         lastTime = now;
 
-        // stop animating if 0 lives left, but update display of lives one more time
         if (player.howManyLives() > 0) {
             win.requestAnimationFrame(main);
         } else {
+        // stop animation, play sound, update lives shown,
+        // and show reset button
             gameoverSound.play();
             updateLives();
+            showReset();
         }
     };
 
@@ -120,6 +123,17 @@ var Engine = (function(global) {
             collisionSound.play();
             }
         });
+    }
+
+    function resetEnemies() {
+         allEnemies.forEach(function(enemy) {
+            enemy.init();
+         });
+    }
+
+    function showReset() {
+        resetButton.style.display = 'block';
+        resetButton.onclick = init;
     }
 
     /* This function initially draws the "game level", it will then call
@@ -185,7 +199,12 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        player.reset();
+        player.resetScore();
+        player.resetLives();
+        resetEnemies();
+        gem.hideGem();
+        resetButton.style.display = 'none';
     }
 
     /* Go ahead and load all of the images we know we're going to need to

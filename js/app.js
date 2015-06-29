@@ -104,6 +104,10 @@ Player.prototype.score = function() {
     return this.currentScore;
 }
 
+Player.prototype.resetScore = function() {
+    this.currentScore = 0;
+}
+
 // 10 points for hitting a gem
 Player.prototype.gemScore = function() {
     var gemSound = document.getElementById('gem');
@@ -137,6 +141,10 @@ Player.prototype.howManyLives = function() {
 // called by checkCollisions
 Player.prototype.loseLife = function() {
     this.lives -= 1;
+}
+
+Player.prototype.resetLives = function() {
+    this.lives = 5;
 }
 
 //*****************************

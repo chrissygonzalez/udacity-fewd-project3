@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <title>Effective JavaScript: Frogger</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href='http://fonts.googleapis.com/css?family=VT323' rel='stylesheet'>
 </head>
 <body>
 	<header>
-		<p>You have<span id="scoreboard"></span>points!</p>
-		<p>You have<span id="lives"></span>lives!</p>
+		<p>SCORE<span id="scoreboard"></span></p>
+		<button id="reset">START OVER</button>
+		<p>LIVES<span id="lives"></span></p>
 	</header>
 	<audio src="sounds/smb_bump.wav" id="collision"></audio>
 	<audio src="sounds/smb_1-up.wav" id="gem"></audio>
