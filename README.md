@@ -1,8 +1,6 @@
-Shall we play a game?
-=====================
+# Welcome to Chrissy Gonzalez's frontend-nanodegree-arcade-game!
 
-Welcome to Chrissy Gonzalez's frontend-nanodegree-arcade-game!
---------------------------------------------------------------
+### Shall we play a game?
 
 Gather gems and cross the road to the water, avoiding bugs along the way.
 
