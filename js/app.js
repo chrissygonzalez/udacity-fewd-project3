@@ -43,6 +43,13 @@ Enemy.prototype.update = function(dt) {
     }
 };
 
+// start all enemies over
+Enemy.prototype.resetEnemies = function() {
+     allEnemies.forEach(function(enemy) {
+        enemy.init();
+     });
+};
+
 //*****************************
 // Players
 //*****************************
@@ -92,6 +99,41 @@ Player.prototype.update = function(key) {
         this.y += ROW_HEIGHT;
     }
 };
+
+// check for collisions with enemies (gem collisions handled by Player gemScore)
+Player.prototype.checkCollisions = function() {
+    var collisionSound = document.getElementById('collision');
+    allEnemies.forEach(function(enemy) {
+        var playerX = player.x + 17,
+            playerY = player.y + 59,
+            PLAYER_WIDTH = 67,
+            PLAYER_HEIGHT = 83,
+            enemyX = enemy.x,
+            enemyY = enemy.y + 73,
+            ENEMY_WIDTH = 101,
+            ENEMY_HEIGHT = 67;
+        if(playerX < enemyX + ENEMY_WIDTH &&
+            playerX + PLAYER_WIDTH > enemyX &&
+            playerY < enemyY + ENEMY_HEIGHT &&
+            playerY + PLAYER_HEIGHT > enemyY) {
+            player.reset();
+            player.loseLife();
+            collisionSound.play();
+        }
+    });
+}
+
+// make reset button visible and clickable
+Player.prototype.showReset = function() {
+    var resetButton = document.getElementById('reset');
+    resetButton.style.display = 'block';
+    return resetButton;
+}
+
+Player.prototype.hideReset = function() {
+    var resetButton = document.getElementById('reset');
+    resetButton.style.display = 'none';
+}
 
 //*****************************
 // Players -- Scoring

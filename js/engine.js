@@ -8,9 +8,7 @@ var Engine = (function(global) {
         lastTime,
         scoreboard = doc.getElementById('scoreboard'),
         lives = doc.getElementById('lives'),
-        collisionSound = doc.getElementById('collision'),
-        gameoverSound = doc.getElementById('gameover'),
-        resetButton = doc.getElementById('reset');
+        gameoverSound = doc.getElementById('gameover');
 
     canvas.width = 505;
     canvas.height = 606;
@@ -38,7 +36,7 @@ var Engine = (function(global) {
         // and show reset button
             gameoverSound.play();
             updateLives();
-            showReset();
+            player.showReset().onclick = init;
         }
     }
 
@@ -52,7 +50,7 @@ var Engine = (function(global) {
     // call the updates, check if player hit enemies
     function update(dt) {
         updateEntities(dt);
-        checkCollisions();
+        player.checkCollisions();
     }
 
     // update everything, check for changes to score, lives, and any collisions
@@ -74,41 +72,6 @@ var Engine = (function(global) {
     // display current lives on screen
     function updateLives() {
         lives.innerHTML = player.howManyLives();
-    }
-
-    // check for collisions with enemies (gem collisions handled by Player gemScore)
-    function checkCollisions() {
-        allEnemies.forEach(function(enemy) {
-            var playerX = player.x + 17,
-                playerY = player.y + 59,
-                PLAYER_WIDTH = 67,
-                PLAYER_HEIGHT = 83,
-                enemyX = enemy.x,
-                enemyY = enemy.y + 73,
-                ENEMY_WIDTH = 101,
-                ENEMY_HEIGHT = 67;
-            if(playerX < enemyX + ENEMY_WIDTH &&
-                playerX + PLAYER_WIDTH > enemyX &&
-                playerY < enemyY + ENEMY_HEIGHT &&
-                playerY + PLAYER_HEIGHT > enemyY) {
-                player.reset();
-                player.loseLife();
-                collisionSound.play();
-            }
-        });
-    }
-
-    // start all enemies over
-    function resetEnemies() {
-         allEnemies.forEach(function(enemy) {
-            enemy.init();
-         });
-    }
-
-    // make reset button visible and clickable
-    function showReset() {
-        resetButton.style.display = 'block';
-        resetButton.onclick = init;
     }
 
     // render everything
@@ -159,9 +122,9 @@ var Engine = (function(global) {
         player.reset();
         player.resetScore();
         player.resetLives();
-        resetEnemies();
+        enemy1.resetEnemies();
         gem.hideGem();
-        resetButton.style.display = 'none';
+        player.hideReset();
     }
 
     // load the images, then start the game
