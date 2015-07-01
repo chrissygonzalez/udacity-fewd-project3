@@ -40,7 +40,7 @@ var Engine = (function(global) {
             updateLives();
             showReset();
         }
-    };
+    }
 
     // initial setup and resetup
     function init() {
@@ -79,13 +79,21 @@ var Engine = (function(global) {
     // check for collisions with enemies (gem collisions handled by Player gemScore)
     function checkCollisions() {
         allEnemies.forEach(function(enemy) {
-        if(player.x < enemy.x + 101 &&
-            player.x > enemy.x &&
-            player.y > enemy.y &&
-            player.y < enemy.y + 83) {
-            player.reset();
-            player.loseLife();
-            collisionSound.play();
+            var playerX = player.x + 17,
+                playerY = player.y + 59,
+                PLAYER_WIDTH = 67,
+                PLAYER_HEIGHT = 83,
+                enemyX = enemy.x,
+                enemyY = enemy.y + 73,
+                ENEMY_WIDTH = 101,
+                ENEMY_HEIGHT = 67;
+            if(playerX < enemyX + ENEMY_WIDTH &&
+                playerX + PLAYER_WIDTH > enemyX &&
+                playerY < enemyY + ENEMY_HEIGHT &&
+                playerY + PLAYER_HEIGHT > enemyY) {
+                player.reset();
+                player.loseLife();
+                collisionSound.play();
             }
         });
     }
