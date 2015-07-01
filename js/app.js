@@ -121,19 +121,19 @@ Player.prototype.checkCollisions = function() {
             collisionSound.play();
         }
     });
-}
+};
 
 // make reset button visible and clickable
 Player.prototype.showReset = function() {
     var resetButton = document.getElementById('reset');
     resetButton.style.display = 'block';
     return resetButton;
-}
+};
 
 Player.prototype.hideReset = function() {
     var resetButton = document.getElementById('reset');
     resetButton.style.display = 'none';
-}
+};
 
 //*****************************
 // Players -- Scoring
